@@ -26,13 +26,13 @@ class ViewController: UIViewController {
     
     //tipChanged（0％.10％.20％）ボタンを変化させた時のアクション
     @IBAction func tipChanged(_ sender: UIButton) {
-
+        
         //安全にアンラップし末尾の％を消し浮動小数点表示の20.00表示にし,20.00を100で割って出た数値0.2をtipに代入する
         guard let buttonTitle = sender.currentTitle else { return }
-              let buttonTitleMinusPercentSign = String(buttonTitle.dropLast())
-              guard let buttonTitleAsAnswer = Double(buttonTitleMinusPercentSign) else { return }
-              tip = buttonTitleAsAnswer / 100
-
+        let buttonTitleMinusPercentSign = String(buttonTitle.dropLast())
+        guard let buttonTitleAsAnswer = Double(buttonTitleMinusPercentSign) else { return }
+        tip = buttonTitleAsAnswer / 100
+        
         //選択されたButtonのみ見た目を変化させる処理
         //更新処理がある場合はgaurdの後ろで実行
         billTextField.endEditing(true)
@@ -59,11 +59,11 @@ class ViewController: UIViewController {
         //billTextFieldが空白でない場合そのtextと(1.0 + tip)を掛けてnumberOfPeopleで割ったresultを小数点以下2桁まで表示させる
         //Stringの空文字判定はisEmptyを使う
         guard let bill = billTextField.text, !bill.isEmpty else { return }
-               guard let billTotal = Double(bill) else { return }
-               let result = billTotal * (1.0 + tip) / Double(numberOfPeople)
-            finalResult = String(format: "%.2f", result)
-                
-    
+        guard let billTotal = Double(bill) else { return }
+        let result = billTotal * (1.0 + tip) / Double(numberOfPeople)
+        finalResult = String(format: "%.2f", result)
+        
+        
         self.performSegue(withIdentifier: "goToResult", sender: self)
     }
     
@@ -72,13 +72,10 @@ class ViewController: UIViewController {
     //セグエでResultViewControllerに伝送するための処理
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         //セグエのidentiferがgoToResultと等しかったら各々のデータを伝送先へ出力する
-        if segue.identifier == "goToResult" {
-            let destinationVC = segue.destination as! ResultsViewController
-    
-            destinationVC.result = finalResult
-            destinationVC.tip = Int(tip * 100)
-            destinationVC.split = numberOfPeople
-        }
+        guard segue.identifier == "goToResult", let destinationVC = segue.destination as? ResultsViewController else { return }
+        destinationVC.result = finalResult
+        destinationVC.tip = Int(tip * 100)
+        destinationVC.split = numberOfPeople
     }
 }
 
